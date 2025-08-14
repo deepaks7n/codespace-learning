@@ -28,7 +28,7 @@
       ]
     }
   },
-  "postCreateCommand": "pip install uv && uv tool install llm && llm install llm-github-models && llm models default github/gpt-4o && sudo service postgresql start && sudo -u postgres createdb calculator_db",
+  "postCreateCommand": "pip install uv && uv sync && uv pip install -e '.[postgres]' && uv tool install llm && llm install llm-github-models && llm models default github/gpt-4o && sudo service postgresql start && sudo -u postgres createdb calculator_db",
   "forwardPorts": [8000, 5432],
   "containerEnv": {
     "PYTHONPATH": "/workspaces/${localWorkspaceFolderBasename}",
