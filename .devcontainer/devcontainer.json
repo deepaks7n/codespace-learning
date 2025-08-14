@@ -30,7 +30,7 @@
     }
   },
   
-  "postCreateCommand": "uv sync && uv pip install -e '.[postgres]' && uv tool install llm && llm install llm-github-models && llm models default github/gpt-4o",
+  "postCreateCommand": "uv sync && uv pip install -e '.[postgres]' && uv tool install llm && llm install llm-github-models && llm models default github/gpt-4o && echo 'Testing database connection...' && sleep 5 && psql postgresql://postgres:postgres@db/calculator_db -c 'SELECT version();' || echo 'Database not ready yet - will be available shortly'",
   "forwardPorts": [8000, 5432],
   
   "containerEnv": {

@@ -28,15 +28,17 @@ A Calculator API with PostgreSQL database designed to learn GitHub Codespaces an
 
 3. **Verify Setup**:
    ```bash
-   # Check if containers are running
-   docker compose -f .devcontainer/docker-compose.yml ps
+   # Check DevContainer status (comprehensive)
+   ./scripts/check_devcontainer.sh
    
-   # Test database connection
+   # Or test database connection directly
    psql postgresql://postgres:postgres@db/calculator_db -c "SELECT version();"
    
    # Start the API server
    ./scripts/start_api.sh
    ```
+   
+   **Note**: In DevContainers, you're already inside the app container. The database runs as a separate service that's automatically managed.
 
 4. **Access Your Application**:
    - **API Documentation**: Click "Open in Browser" when port 8000 is forwarded, then add `/docs`
@@ -298,26 +300,28 @@ The `.devcontainer/` folder contains:
 
 ### Common Issues and Solutions
 
-#### 1. Containers Not Starting
+#### 1. Containers Not Starting / Database Issues
 ```bash
-# Rebuild the DevContainer
-# VS Code Command Palette (Cmd/Ctrl+Shift+P) → "Rebuild Container"
+# Check overall DevContainer status
+./scripts/check_devcontainer.sh
 
-# Or manually restart containers
-docker compose -f .devcontainer/docker-compose.yml down
-docker compose -f .devcontainer/docker-compose.yml up -d
+# In DevContainers, you DON'T manually start containers
+# The database service runs automatically alongside your app container
+
+# If database isn't working, rebuild the DevContainer:
+# VS Code Command Palette (Cmd/Ctrl+Shift+P) → "Rebuild Container"
 ```
 
 #### 2. Database Connection Issues
 ```bash
-# Check if PostgreSQL is running
-docker compose -f .devcontainer/docker-compose.yml ps
+# Test connection directly
+psql postgresql://postgres:postgres@db/calculator_db -c "SELECT version();"
 
-# Test connection manually
-psql postgresql://postgres:postgres@db/calculator_db -c "\l"
+# If connection fails, wait a moment (database might still be starting)
+sleep 10 && psql postgresql://postgres:postgres@db/calculator_db -c "\l"
 
-# If database doesn't exist, create it
-docker compose -f .devcontainer/docker-compose.yml exec db createdb -U postgres calculator_db
+# The calculator_db database is created automatically
+# If it doesn't exist, the startup script will create it
 ```
 
 #### 3. API Server Won't Start

@@ -8,8 +8,18 @@ echo "================================"
 if [ -n "$CODESPACES" ] || [ -n "$GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN" ]; then
     # GitHub Codespace environment with Docker Compose
     echo "📦 PostgreSQL running in Docker Compose service..."
-    echo "   Database should be available at 'db' host"
-    sleep 2
+    echo "   Testing database connection..."
+    
+    # Wait for database to be ready
+    for i in {1..10}; do
+        if psql postgresql://postgres:postgres@db/calculator_db -c "SELECT 1;" >/dev/null 2>&1; then
+            echo "✅ Database connection successful!"
+            break
+        else
+            echo "⏳ Waiting for database... (attempt $i/10)"
+            sleep 2
+        fi
+    done
 elif command -v systemctl >/dev/null 2>&1; then
     # Linux with systemd
     echo "📦 Starting PostgreSQL (Linux/systemd)..."
