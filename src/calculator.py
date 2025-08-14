@@ -121,7 +121,7 @@ def calculate_average(numbers: Sequence[Number]) -> float:
     """
     if not numbers:
         raise ValueError("Cannot calculate average of empty list")
-    return float(sum(numbers)) / float(len(numbers))
+    return sum(numbers) / len(numbers)
 
 
 def calculate_median(numbers: Sequence[Number]) -> float:
