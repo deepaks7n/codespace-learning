@@ -13,9 +13,35 @@ A Calculator API with PostgreSQL database designed to learn GitHub Codespaces an
 ## 🚀 Quick Start
 
 ### Option 1: GitHub Codespaces (Recommended for Learning)
-1. **Launch Codespace**: Click the green "Code" button and select "Create codespace on main"
-2. **Or use direct link**: `https://codespaces.new/deepaks7n/codespace-learning?quickstart=1`
-3. **Full Environment**: Includes PostgreSQL, all tools pre-configured
+
+#### Step-by-Step Codespace Setup:
+1. **Launch Codespace**: 
+   - Go to [this repository](https://github.com/deepaks7n/codespace-learning)
+   - Click the green "Code" button → "Codespaces" tab → "Create codespace on main"
+   - **Or use direct link**: `https://codespaces.new/deepaks7n/codespace-learning?quickstart=1`
+
+2. **Automatic Configuration** (takes 2-3 minutes):
+   - Docker Compose builds the app and database containers
+   - PostgreSQL 15 starts in background with persistent storage
+   - Python 3.13 environment with all dependencies installed
+   - Environment variables configured automatically
+
+3. **Verify Setup**:
+   ```bash
+   # Check if containers are running
+   docker compose -f .devcontainer/docker-compose.yml ps
+   
+   # Test database connection
+   psql postgresql://postgres:postgres@db/calculator_db -c "SELECT version();"
+   
+   # Start the API server
+   ./scripts/start_api.sh
+   ```
+
+4. **Access Your Application**:
+   - **API Documentation**: Click "Open in Browser" when port 8000 is forwarded, then add `/docs`
+   - **Or manually**: http://localhost:8000/docs
+   - **Test endpoint**: http://localhost:8000/health
 
 ### Option 2: Local Development 
 ```bash
@@ -34,7 +60,9 @@ cd codespace-learning
 
 ```
 ├── .devcontainer/
-│   └── devcontainer.json     # Codespace configuration with PostgreSQL
+│   ├── devcontainer.json     # Codespace configuration
+│   ├── docker-compose.yml    # Multi-container setup (app + PostgreSQL)
+│   └── Dockerfile           # Custom Python environment
 ├── codespace_learning/
 │   ├── api/
 │   │   └── calculator_endpoints.py  # FastAPI endpoints
@@ -91,30 +119,58 @@ uv run --extra dev python -m pytest tests/ -v
 uv run --extra dev python -m pytest tests/ --cov=codespace_learning
 ```
 
-### Codespace Development
-```bash
-# Full setup with PostgreSQL (automatic)
-./scripts/start_api.sh
-```
+### GitHub Codespaces Development
 
-**Access Points:**
+#### Automatic Startup (Recommended)
+When you open the Codespace, everything is configured automatically:
+- PostgreSQL database server starts in a Docker container
+- Python environment is set up with all dependencies
+- FastAPI server starts automatically on port 8000
+
+**Access Points (automatically forwarded):**
 - **API Documentation**: http://localhost:8000/docs (Interactive Swagger UI)
 - **Alternative Docs**: http://localhost:8000/redoc  
 - **API Root**: http://localhost:8000
+- **Health Check**: http://localhost:8000/health
+
+#### Manual Commands (if needed)
+```bash
+# Start the API server manually
+./scripts/start_api.sh
+
+# Or start simple API (no database)
+./scripts/start_simple_api.sh
+
+# Test database connection
+psql postgresql://postgres:postgres@db/calculator_db -c "SELECT version();"
+```
+
+#### DevContainer Architecture
+The Codespace uses Docker Compose with two services:
+- **app**: Python 3.13 environment with your code
+- **db**: PostgreSQL 15 database with persistent storage
+
+Environment variables are automatically set:
+- `DATABASE_URL=postgresql+psycopg://postgres:postgres@db/calculator_db`
 
 ## 🔧 DevContainer Features
 
-This project demonstrates several DevContainer concepts:
+This project demonstrates modern DevContainer concepts using Docker Compose:
 
-### Base Image
-- **Python 3.13** on Debian Bullseye
-- Pre-configured Python development environment
+### Multi-Container Architecture
+- **App Container**: Custom Python 3.13 environment with development tools
+- **Database Container**: PostgreSQL 15 with persistent volume storage
+- **Service Communication**: Containers communicate via Docker network
 
-### Features Added
+### Base Configuration
+- **Custom Dockerfile**: Python 3.13 on Debian Bullseye
+- **PostgreSQL Client**: Pre-installed for database operations
+- **Development Tools**: uv, llm, and GitHub Models integration
+
+### Features Added via DevContainer
 - **Node.js LTS** - For frontend tooling if needed
 - **GitHub CLI** - Direct GitHub integration
 - **Docker-in-Docker** - Container support within container
-- **PostgreSQL** - Full database server with automatic setup
 
 ### VS Code Extensions
 - Python language support with Pylance
@@ -123,11 +179,17 @@ This project demonstrates several DevContainer concepts:
 - Python environment management
 
 ### Post-Create Commands
-- Installs `uv` for fast Python package management
+- Installs dependencies with `uv sync`
 - Sets up `llm` tool with GitHub Models integration
 - Configures GPT-4o as default model for free AI assistance
-- Starts PostgreSQL service automatically
-- Creates calculator_db database
+- Database is automatically available via Docker Compose
+
+### Key Learning: Why Docker Compose?
+The postgres DevContainer "feature" only installs client tools, not a database server. Docker Compose provides:
+- ✅ Real PostgreSQL server in separate container
+- ✅ Persistent data storage
+- ✅ Proper service isolation
+- ✅ Production-like architecture
 
 ## 🌐 API Usage Examples
 
@@ -188,20 +250,36 @@ print(history.json())
 
 ## 🗄️ Database Integration
 
-- **PostgreSQL** automatically configured and started
-- **Calculation history** stored permanently  
-- **SQLAlchemy ORM** for database operations
-- **Automatic table creation** on startup
-- **Environment variables** for easy configuration
+### PostgreSQL Setup (Docker Compose)
+- **PostgreSQL 15** runs in separate container service named `db`
+- **Persistent Volume**: `postgres-data` preserves data between Codespace restarts
+- **Automatic Startup**: Database starts when Codespace opens
+- **Connection**: App connects via service name, not localhost
+
+### Database Features
+- **Calculation History**: All API operations stored permanently  
+- **SQLAlchemy ORM**: Modern Python database operations
+- **Automatic Tables**: Created on first API startup
+- **Environment Config**: `DATABASE_URL` automatically set
+
+### Connection Details
+```bash
+Host: db (service name in Docker Compose)
+Port: 5432 (default PostgreSQL)
+Database: calculator_db
+Username: postgres
+Password: postgres
+Full URL: postgresql+psycopg://postgres:postgres@db/calculator_db
+```
 
 ## 🎓 Learning Concepts
 
 ### 1. **DevContainer Configuration**
-The `.devcontainer/devcontainer.json` file defines:
-- Base Docker image to use
-- Additional features to install
-- VS Code settings and extensions
-- Environment variables and port forwarding
+The `.devcontainer/` folder contains:
+- **devcontainer.json**: Main configuration pointing to Docker Compose
+- **docker-compose.yml**: Multi-container setup (app + database)
+- **Dockerfile**: Custom Python environment with tools
+- **Port Forwarding**: Automatically forwards ports 8000 and 5432
 
 ### 2. **Codespace Benefits**
 - ✅ Consistent development environment
@@ -216,6 +294,55 @@ The `.devcontainer/devcontainer.json` file defines:
 - Focus on learning, not troubleshooting
 - Easy to reset and start fresh
 
+## 🔧 Troubleshooting Codespaces
+
+### Common Issues and Solutions
+
+#### 1. Containers Not Starting
+```bash
+# Rebuild the DevContainer
+# VS Code Command Palette (Cmd/Ctrl+Shift+P) → "Rebuild Container"
+
+# Or manually restart containers
+docker compose -f .devcontainer/docker-compose.yml down
+docker compose -f .devcontainer/docker-compose.yml up -d
+```
+
+#### 2. Database Connection Issues
+```bash
+# Check if PostgreSQL is running
+docker compose -f .devcontainer/docker-compose.yml ps
+
+# Test connection manually
+psql postgresql://postgres:postgres@db/calculator_db -c "\l"
+
+# If database doesn't exist, create it
+docker compose -f .devcontainer/docker-compose.yml exec db createdb -U postgres calculator_db
+```
+
+#### 3. API Server Won't Start
+```bash
+# Check dependencies
+uv sync
+
+# Install postgres extras
+uv pip install -e ".[postgres]"
+
+# Start with debug info
+uv run python -c "from codespace_learning.app import app; print('App imported successfully')"
+```
+
+#### 4. Port Forwarding Issues
+- Codespaces should automatically forward ports 8000 and 5432
+- If not working: Go to "Ports" tab in VS Code and manually add ports
+- Make sure visibility is set to "Public" if sharing with others
+
+### Reset Everything
+If nothing works, rebuild completely:
+1. VS Code → Command Palette → "Codespaces: Rebuild Container"
+2. Wait for full rebuild (3-5 minutes)
+3. Run `./scripts/start_api.sh`
+
 ## 🔗 Useful Links
 
 - **Direct Codespace**: `https://codespaces.new/deepaks7n/codespace-learning?quickstart=1`
@@ -223,3 +350,4 @@ The `.devcontainer/devcontainer.json` file defines:
 - **DevContainer Spec**: https://containers.dev/
 - **Available Images**: https://github.com/devcontainers/images
 - **Available Features**: https://github.com/devcontainers/features
+- **Docker Compose DevContainers**: https://code.visualstudio.com/docs/devcontainers/docker-compose
