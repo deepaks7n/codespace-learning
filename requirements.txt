@@ -1,5 +1,15 @@
+# FastAPI and API dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# Database dependencies
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+
 # Development dependencies
 black==24.8.0
 pytest==8.3.2
 flake8==7.1.1
 mypy==1.11.1
+httpx==0.25.2  # For testing API endpoints
