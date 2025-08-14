@@ -4,8 +4,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from src.database.connection import engine, Base
-from src.api.calculator_endpoints import router as calculator_router
+from .database.connection import engine, Base
+from .api.calculator_endpoints import router as calculator_router
 
 
 @asynccontextmanager
@@ -52,3 +52,9 @@ async def root():
 async def health_check():
     """Health check endpoint."""
     return {"status": "healthy", "message": "Calculator API is running"}
+
+
+def start_server():
+    """Start the FastAPI server."""
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)

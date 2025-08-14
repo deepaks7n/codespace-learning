@@ -5,10 +5,33 @@ description = "Calculator API with PostgreSQL for learning GitHub Codespaces and
 authors = [{name = "Deepak", email = "deepak@example.com"}]
 readme = "README.md"
 requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.9.0",
+    "sqlalchemy>=2.0.32",
+    "psycopg>=3.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black==24.8.0",
+    "pytest==8.3.2",
+    "flake8==7.1.1",
+    "mypy==1.11.1",
+    "httpx==0.25.2",
+]
+postgres = [
+    "psycopg[pool,binary]>=3.1.0",
+]
 
 [project.scripts]
-calculator = "src.main:main"
-start-api = "scripts.start_api:main"
+calculator = "codespace_learning.main:main"
+start-api = "codespace_learning.app:start_server"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.black]
 line-length = 88

@@ -20,16 +20,16 @@ sudo -u postgres createdb calculator_db 2>/dev/null || echo "Database already ex
 if [ ! -d ".venv" ]; then
     echo "📥 Installing dependencies..."
     uv venv
-    uv pip install -r requirements.txt
+    uv pip install -e .
 fi
 
 # Run database migrations (create tables)
 echo "🔧 Creating database tables..."
-python -c "from src.database.connection import engine, Base; Base.metadata.create_all(bind=engine); print('✅ Database tables created')"
+python -c "from codespace_learning.database.connection import engine, Base; Base.metadata.create_all(bind=engine); print('✅ Database tables created')"
 
 # Start the API server
 echo "🌟 Starting FastAPI server on http://localhost:8000"
 echo "📖 API Documentation: http://localhost:8000/docs"
 echo "================================"
 
-uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload
+uvicorn codespace_learning.app:app --host 0.0.0.0 --port 8000 --reload

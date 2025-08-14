@@ -4,9 +4,9 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from src.database.connection import get_db
-from src.models.calculation import Calculation
-from src.models.schemas import (
+from ..database.connection import get_db
+from ..models.calculation import Calculation
+from ..models.schemas import (
     BasicOperationRequest,
     SingleOperandRequest,
     PercentageRequest,
@@ -14,7 +14,7 @@ from src.models.schemas import (
     CalculationResponse,
     ErrorResponse,
 )
-from src import calculator
+from .. import calculator
 
 router = APIRouter(prefix="/calculator", tags=["Calculator"])
 

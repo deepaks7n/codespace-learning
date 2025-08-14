@@ -4,7 +4,7 @@ Tests for the Calculator API
 
 import pytest
 from fastapi.testclient import TestClient
-from src.app import app
+from codespace_learning.app import app
 
 client = TestClient(app)
 

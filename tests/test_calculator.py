@@ -3,7 +3,7 @@ Unit tests for calculator functions
 """
 
 import unittest
-from src.calculator import (
+from codespace_learning.calculator import (
     add,
     subtract,
     multiply,

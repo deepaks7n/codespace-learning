@@ -3,7 +3,7 @@
 Main application demonstrating the calculator functions
 """
 
-from src.calculator import (
+from .calculator import (
     add,
     subtract,
     multiply,
