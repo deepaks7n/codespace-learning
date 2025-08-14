@@ -4,13 +4,12 @@
 echo "🚀 Starting Calculator API..."
 echo "================================"
 
-# Detect environment and start PostgreSQL accordingly
+# Detect environment and setup PostgreSQL accordingly
 if [ -n "$CODESPACES" ] || [ -n "$GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN" ]; then
-    # GitHub Codespace environment
-    echo "📦 Starting PostgreSQL (GitHub Codespace)..."
-    sudo service postgresql start 2>/dev/null || echo "PostgreSQL service not available"
-    sleep 3
-    sudo -u postgres createdb calculator_db 2>/dev/null || echo "Database already exists"
+    # GitHub Codespace environment with Docker Compose
+    echo "📦 PostgreSQL running in Docker Compose service..."
+    echo "   Database should be available at 'db' host"
+    sleep 2
 elif command -v systemctl >/dev/null 2>&1; then
     # Linux with systemd
     echo "📦 Starting PostgreSQL (Linux/systemd)..."

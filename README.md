@@ -10,17 +10,32 @@ A Calculator API with PostgreSQL database designed to learn GitHub Codespaces an
 - Explore automated development environment setup with databases
 - Learn API development and testing
 
-## 🚀 Quick Start with Codespaces
+## 🚀 Quick Start
 
+### Option 1: GitHub Codespaces (Recommended for Learning)
 1. **Launch Codespace**: Click the green "Code" button and select "Create codespace on main"
 2. **Or use direct link**: `https://codespaces.new/deepaks7n/codespace-learning?quickstart=1`
+3. **Full Environment**: Includes PostgreSQL, all tools pre-configured
+
+### Option 2: Local Development 
+```bash
+# Clone the repository
+git clone https://github.com/deepaks7n/codespace-learning.git
+cd codespace-learning
+
+# Quick start (no database required)
+./scripts/start_simple_api.sh
+
+# Or full setup with PostgreSQL
+./scripts/start_api.sh
+```
 
 ## 📁 Project Structure
 
 ```
 ├── .devcontainer/
 │   └── devcontainer.json     # Codespace configuration with PostgreSQL
-├── src/
+├── codespace_learning/
 │   ├── api/
 │   │   └── calculator_endpoints.py  # FastAPI endpoints
 │   ├── database/
@@ -30,9 +45,11 @@ A Calculator API with PostgreSQL database designed to learn GitHub Codespaces an
 │   │   └── schemas.py        # Pydantic schemas
 │   ├── calculator.py         # Calculator functions
 │   ├── main.py              # CLI application
-│   └── app.py               # FastAPI application
+│   ├── app.py               # FastAPI application (with database)
+│   └── app_simple.py        # FastAPI application (no database)
 ├── scripts/
-│   └── start_api.sh         # API startup script
+│   ├── start_api.sh         # Full API startup script (with PostgreSQL)
+│   └── start_simple_api.sh  # Simple API startup script (no database)
 ├── tests/
 │   ├── __init__.py
 │   └── test_calculator.py    # Unit tests
@@ -43,33 +60,47 @@ A Calculator API with PostgreSQL database designed to learn GitHub Codespaces an
 
 ## 🚀 Running the Application
 
-### Option 1: FastAPI Server (Recommended)
-```bash
-# Easy startup (handles PostgreSQL setup automatically)
-./scripts/start_api.sh
+### Local Development
 
-# Manual startup
-sudo service postgresql start
-sudo -u postgres createdb calculator_db
-uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload
+#### Simple API (No Database) - **Best for Local Testing**
+```bash
+./scripts/start_simple_api.sh
+```
+- ✅ Works immediately on any system
+- ✅ No PostgreSQL required
+- ✅ All calculator functions available
+- ❌ No calculation history storage
+
+#### Full API (With PostgreSQL)
+```bash
+./scripts/start_api.sh
+```
+- ✅ Full database integration
+- ✅ Calculation history storage
+- ⚠️ Requires PostgreSQL installation
+
+#### CLI Calculator
+```bash
+# Run the calculator demo
+uv run python -m codespace_learning.main
+
+# Run tests
+uv run --extra dev python -m pytest tests/ -v
+
+# Run with coverage
+uv run --extra dev python -m pytest tests/ --cov=codespace_learning
+```
+
+### Codespace Development
+```bash
+# Full setup with PostgreSQL (automatic)
+./scripts/start_api.sh
 ```
 
 **Access Points:**
 - **API Documentation**: http://localhost:8000/docs (Interactive Swagger UI)
-- **Alternative Docs**: http://localhost:8000/redoc
+- **Alternative Docs**: http://localhost:8000/redoc  
 - **API Root**: http://localhost:8000
-
-### Option 2: CLI Calculator
-```bash
-# Run the calculator demo
-python src/main.py
-
-# Run tests
-python -m pytest tests/
-
-# Run with coverage
-python -m pytest tests/ --cov=src
-```
 
 ## 🔧 DevContainer Features
 

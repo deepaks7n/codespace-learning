@@ -3,16 +3,35 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+import logging
 
-from .database.connection import engine, Base
-from .api.calculator_endpoints import router as calculator_router
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Try to import database components, but don't fail if they're not available
+database_available = False
+try:
+    from .database.connection import engine, Base
+    from .api.calculator_endpoints import router as calculator_router
+    database_available = True
+    logger.info("Database components loaded successfully")
+except Exception as e:
+    logger.warning(f"Database components not available: {e}")
+    logger.info("Running in database-free mode")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan handler."""
-    # Create database tables
-    Base.metadata.create_all(bind=engine)
+    if database_available:
+        try:
+            # Create database tables
+            Base.metadata.create_all(bind=engine)
+            logger.info("Database tables created successfully")
+        except Exception as e:
+            logger.warning(f"Failed to create database tables: {e}")
+            logger.info("Continuing without database features")
     yield
 
 
@@ -31,7 +50,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(calculator_router)
+# Include database router only if available
+if database_available:
+    app.include_router(calculator_router)
+    logger.info("Database-enabled calculator endpoints loaded")
+else:
+    # Import and include simple endpoints instead
+    from .api.simple_endpoints import router as simple_router
+    app.include_router(simple_router)
+    logger.info("Database-free calculator endpoints loaded")
 
 
 @app.get("/")

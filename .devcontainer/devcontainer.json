@@ -1,16 +1,17 @@
 {
   "name": "Python API with PostgreSQL",
-  "image": "mcr.microsoft.com/devcontainers/python:3.13-bullseye",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "latest"
     },
     "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/devcontainers/features/postgres:1": {
-      "version": "latest"
-    }
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
+  
   "customizations": {
     "vscode": {
       "settings": {
@@ -28,10 +29,12 @@
       ]
     }
   },
-  "postCreateCommand": "pip install uv && uv sync && uv pip install -e '.[postgres]' && uv tool install llm && llm install llm-github-models && llm models default github/gpt-4o && sudo service postgresql start && sudo -u postgres createdb calculator_db",
+  
+  "postCreateCommand": "uv sync && uv pip install -e '.[postgres]' && uv tool install llm && llm install llm-github-models && llm models default github/gpt-4o",
   "forwardPorts": [8000, 5432],
+  
   "containerEnv": {
     "PYTHONPATH": "/workspaces/${localWorkspaceFolderBasename}",
-    "DATABASE_URL": "postgresql+psycopg://postgres@localhost/calculator_db"
+    "DATABASE_URL": "postgresql+psycopg://postgres:postgres@db/calculator_db"
   }
 }
