@@ -72,7 +72,10 @@ def sqrt(n: Number) -> float:
     # allowing comparison
     if float(n) < 0.0:
         raise ValueError("Cannot take square root of a negative number")
-    return float(_sqrt(float(n)))
+    n_float = float(n)
+    if n_float < 0.0:
+        raise ValueError("Cannot take square root of a negative number")
+    return float(_sqrt(n_float))
 
 
 def factorial(n: int) -> int:
