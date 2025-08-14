@@ -1,0 +1,22 @@
+[project]
+name = "codespace-learning"
+version = "0.1.0"
+description = "Simple Python project for learning GitHub Codespaces and DevContainers"
+authors = [{name = "Deepak", email = "deepak@example.com"}]
+readme = "README.md"
+requires-python = ">=3.11"
+
+[project.scripts]
+calculator = "src.main:main"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
